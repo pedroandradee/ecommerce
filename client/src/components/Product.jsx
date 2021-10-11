@@ -14,7 +14,7 @@ const Info = styled.div`
     left: 0;
     background-color: rgba(0, 0, 0, 0.2);
     z-index: 3;
-    transition: all o.5s ease;
+    transition: all 0.5s ease;
     cursor: pointer;
 `;
 
