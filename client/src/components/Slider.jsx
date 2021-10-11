@@ -26,7 +26,7 @@ const Arrow = styled.div`
     right: ${props=> props.direction === "right" && "10px"};
     margin: auto;
     cursor: pointer;
-    opacity: 0.5;
+    opacity: 0.8;
     z-index: 2;
 `;
 
@@ -96,14 +96,14 @@ return (
         </Arrow>
         <Wrapper slideIndex={slideIndex}>
             {sliderItems.map(item=>(
-                    <Slide id = {item.id} bg={item.bg}>
+                    <Slide key={item.id} bg={item.bg}>
                     <ImgContainer>
                         <Image src={item.img} />
                     </ImgContainer>
                     <InfoContainer>
                         <Title>{item.title}</Title>
                         <Description>{item.description}</Description>
-                        <Button>SHOW NOW</Button>
+                        <Button>MOSTRAR</Button>
                     </InfoContainer>
                 </Slide>
             ))}
