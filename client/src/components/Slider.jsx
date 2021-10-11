@@ -28,6 +28,11 @@ const Arrow = styled.div`
     cursor: pointer;
     opacity: 0.8;
     z-index: 2;
+
+    &:hover{
+        opacity: 1;
+        background-color: lightblue;
+    }
 `;
 
 const Wrapper = styled.div`
@@ -73,8 +78,11 @@ const Description = styled.p`
 const Button = styled.button`
     padding: 10px;
     font-size: 20px;
-    background-color: transparent;
+    background-color: crimson;
+    color: white;
     cursor: pointer;
+    border-radius: 20px;
+    border: none;
 `;
 
 const Slider = () => {
