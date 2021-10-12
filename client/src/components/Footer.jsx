@@ -79,7 +79,7 @@ const Footer = () => {
     return (
         <Container>
             <Left>
-                <Logo>e-Commerce.</Logo>
+                <Logo>CMC</Logo>
                 <Description>Descrição sobre a empresa de ecomerce que esta sendo disponibilizada.</Description>
                 <SocialContainer>
                     <SocialIcon color="3B5999">
@@ -97,7 +97,7 @@ const Footer = () => {
                 <Title>Links importantes</Title>
                 <List>
                     <ListItem>Início</ListItem>
-                    <ListItem>Cart</ListItem>
+                    <ListItem>Carrinho</ListItem>
                     <ListItem>Moda Masculina</ListItem>
                     <ListItem>Moda Feminina</ListItem>
                     <ListItem>Acessórios</ListItem>
