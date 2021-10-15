@@ -5,12 +5,23 @@ module.exports = {
     await queryInterface.createTable('carts', { 
       id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
         references: { model: 'users', key: 'id'},
         primaryKey: true,
         autoIncrement: false,
         allowNull: false,
         onUpdade: 'CASCADE',
         onDelete: 'CASCADE',
+      },
+      type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "comum"
       },
       created_at: {
         type: Sequelize.DATE,
@@ -24,6 +35,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('carts');
   }
 };
