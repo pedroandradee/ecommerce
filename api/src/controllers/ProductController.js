@@ -1,12 +1,24 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Size = require("../models/Size");
 
 module.exports = {
     //INDEX
     async index(req, res){
         try{
             const product = await Product.findByPk(req.params.id, {
-                include: {association: 'categories', attributes: ['id', 'category']}
+                include: [
+                    {
+                        association: 'categories', 
+                        attributes: ['id', 'category']
+                    },
+                    {
+                        association: 'sizes',
+                    },
+                    {
+                        association: 'colors',
+                    }
+                ]
             });
             if(product){
                 return res.status(200).json({
@@ -27,17 +39,27 @@ module.exports = {
     async indexAll(req, res){
         const qNew = req.query.new;
         const qCategory = req.query.category;
+        console.log(qCategory);
         let products;
         try{
             if(qNew){
                 products = await Product.findAll({ limit: 5, order: [['created_at', 'DESC']]})
             } else if(qCategory){
+                //console.log("categoria");
                 products = await Product.findAll({ 
-                    include: {
-                        association: 'categories', 
-                        attributes: ['id', 'category'], 
-                        where: {category: qCategory}
-                    },
+                    include: [
+                        {
+                            association: 'categories', 
+                            attributes: ['id', 'category'], 
+                            where: {category: qCategory}
+                        },
+                        {
+                            association: 'sizes'
+                        },
+                        {
+                            association: 'colors'
+                        }
+                    ],
                 })
             } else {
                 products = await Product.findAll({
@@ -56,17 +78,32 @@ module.exports = {
     },
     //CREATE
     async store(req, res){
-        const newProduct = new Product(req.body);
         try{
-            const savedProduct = await newProduct.save();
+            const savedProduct = await Product.create({
+                title: req.body.title,
+                description: req.body.description,
+                image: req.body.image,
+                price: req.body.price,
+                categories: req.body.categories,
+                sizes: req.body.sizes,
+                colors: req.body.colors
+            },{
+                include: [
+                    {
+                        association: 'categories'
+                    },
+                    {
+                        association: 'sizes',
+                    },
+                    {
+                        association: 'colors'
+                    }
+                ]
+            });
             if(savedProduct){
-                req.body.categories.map(async (c)=>{
-                    await Category.create({product_id: savedProduct.dataValues.id, category: c});
-                })
                 return res.status(200).json({
                     Status: "Produto salvo",
-                    ...savedProduct.dataValues,
-                    categories: req.body.categories
+                    savedProduct
                 })
             }
             return res.status(200).json({

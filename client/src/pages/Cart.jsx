@@ -4,6 +4,15 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
+import { useSelector } from "react-redux";
+import StripeCheckout from "react-stripe-checkout";
+import { useState, useEffect } from "react";
+import { userRequest } from "../requestMethods";
+import { useHistory } from "react-router";
+
+require("dotenv").config();
+
+const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
 
@@ -162,6 +171,27 @@ const SummaryButton = styled.button`
 `;
 
 const Cart = () => {
+    const cart = useSelector(state=>state.cart);
+    const [stripeToken, setStripeToken] = useState(null);
+    const history = useHistory();
+
+    const onToken = (token) => {
+        setStripeToken(token);
+    }
+
+    useEffect(()=>{
+        const makeRequest = async () => {
+            try{
+                const res = await userRequest.post("/api/payment", {
+                    tokenId: stripeToken.id,
+                    amount: cart.total * 100
+                });
+                history.push("/sucess", { data:res.data });
+            } catch(err) {}
+        }
+        stripeToken && cart.total >= 1 && makeRequest();
+    }, [stripeToken, cart.total, history])
+
     return (
         <Container>
             <Navbar />
@@ -178,51 +208,36 @@ const Cart = () => {
                 </Top>
                 <Bottom>
                     <Info>
-                        <Product>
-                            <ProductDetail>
-                                <Image src="https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A"/>
-                                <Details>
-                                    <ProductName><b>Product:</b> SAPATOS JESSIE THUNDER</ProductName>
-                                    <ProductId><b>ID:</b> 6549813218</ProductId>
-                                    <ProductColor color="black" />
-                                    <ProductSize><b>Tamanho:</b> 38</ProductSize>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetail>
-                                <ProductAmountContainer>
-                                    <Remove/>
-                                    <ProductAmount>2</ProductAmount>
-                                    <Add />
-                                </ProductAmountContainer>
-                                <ProductPrice>R$ 180,00</ProductPrice>
-                            </PriceDetail>
-                        </Product>
+                        {cart.products?.map(product=>(
+                            <Product>
+                                <ProductDetail>
+                                    <Image src={product.image}/>
+                                    <Details>
+                                        <ProductName><b>Product:</b> {product.title}</ProductName>
+                                        <ProductId><b>ID:</b> {product.id}</ProductId>
+                                        <ProductColor color={product.color} />
+                                        <ProductSize><b>Tamanho:</b> {product.size}</ProductSize>
+                                    </Details>
+                                </ProductDetail>
+                                <PriceDetail>
+                                    <ProductAmountContainer>
+                                        <Remove/>
+                                        <ProductAmount>{product.quantity}</ProductAmount>
+                                        <Add />
+                                    </ProductAmountContainer>
+                                    <ProductPrice>R$ {product.price*product.quantity}</ProductPrice>
+                                </PriceDetail>
+                                
+                            </Product>
+                        ))}
                         <Hr />
-                        <Product>
-                            <ProductDetail>
-                                <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                                <Details>
-                                    <ProductName><b>Product:</b> CAMISA HAKURA</ProductName>
-                                    <ProductId><b>ID:</b> 6541861625</ProductId>
-                                    <ProductColor color="gray" />
-                                    <ProductSize><b>Tamanho:</b> M</ProductSize>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetail>
-                                <ProductAmountContainer>
-                                    <Remove/>
-                                    <ProductAmount>1</ProductAmount>
-                                    <Add />
-                                </ProductAmountContainer>
-                                <ProductPrice>R$ 90,00</ProductPrice>
-                            </PriceDetail>
-                        </Product>
-                    </Info>
+                        
+                        </Info>
                     <Summary>
                         <SummaryTitle>RESUMO DO PEDIDO</SummaryTitle>
                         <SummaryItem>
                             <SummaryItemText>Subtotal</SummaryItemText>
-                            <SummaryItemPrice>R$ 270,00</SummaryItemPrice>
+                            <SummaryItemPrice>R$ {cart.total.toFixed(2)}</SummaryItemPrice>
                         </SummaryItem>
                         <SummaryItem>
                             <SummaryItemText>Taxa de envio</SummaryItemText>
@@ -233,10 +248,20 @@ const Cart = () => {
                             <SummaryItemPrice>R$ -30,00</SummaryItemPrice>
                         </SummaryItem>
                         <SummaryItem type="total">
-                            <SummaryItemText>Total</SummaryItemText>
-                            <SummaryItemPrice>R$ 270,00</SummaryItemPrice>
+                            <SummaryItemText>Total </SummaryItemText>
+                            <SummaryItemPrice>R$ {cart.total.toFixed(2)}</SummaryItemPrice>
                         </SummaryItem>
-                        <SummaryButton>FINALIZAR PEDIDO</SummaryButton>
+                        <StripeCheckout
+                            name="CMC"
+                            billingAddress
+                            shippingAddress
+                            description={`Seu total é R$${cart.total}`}
+                            amount={cart.total*100}
+                            token={onToken}
+                            stripeKey={KEY}
+                        >
+                            <SummaryButton>FINALIZAR PEDIDO</SummaryButton>
+                        </StripeCheckout>
                     </Summary>
                 </Bottom>
             </Wrapper>

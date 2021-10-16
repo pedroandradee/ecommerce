@@ -2,35 +2,23 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('products', { 
+    await queryInterface.createTable('sizes', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      title: {
+      product_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'products', key: 'id'},
+        allowNull: false,
+        onUpdade: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      size:{
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      image: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      price: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-        defaultValue: 99.9,
-      },
-      is_stock: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -44,6 +32,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('products');
+    await queryInterface.dropTable('sizes');
   }
 };
