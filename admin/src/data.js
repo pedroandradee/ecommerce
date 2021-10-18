@@ -48,3 +48,9 @@
             "Active User": 3000,
         },
     ];
+
+    export const rows = [
+        { id: 1, username: "anyaT", avatar:"http://localhost:5000/images/anya.jpg", email:"anyatjoy@email.com", status:"active", transaction:"3000.00"},
+        { id: 2, username: "elleF", avatar:"http://localhost:5000/images/elle_anning.jpg", email:"ellef@email.com", status:"active", transaction:"320.00"},
+        { id: 3, username: "maisieW", avatar:"http://localhost:5000/images/maisie_williams.jpg", email:"maisieWlls@email.com", status:"active", transaction:"0.00"},
+    ];

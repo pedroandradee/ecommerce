@@ -47,7 +47,7 @@ const FeaturedInfo = () => {
     return (
         <Container>
             <Item>
-                <SpanTitle>Revanue</SpanTitle>
+                <SpanTitle>Revenue</SpanTitle>
                 <MoneyContainer>
                     <SpanMoney>R$ 2,41</SpanMoney>
                     <SpanMoneyRate>
